@@ -59,26 +59,37 @@ app.use((req, res, next) => {
   next();
 });
 
+let isSetup = false;
+let setupPromise: Promise<express.Express> | null = null;
+
 // Setup function to initialize routes and static serving
-export async function setupApp() {
-  await registerRoutes(httpServer, app);
+export function setupApp() {
+  if (isSetup) return Promise.resolve(app);
+  if (setupPromise) return setupPromise;
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+  setupPromise = (async () => {
+    await registerRoutes(httpServer, app);
 
-    res.status(status).json({ message });
-    throw err;
-  });
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-  if (process.env.NODE_ENV === "production") {
-    serveStatic(app);
-  } else {
-    const { setupVite } = await import("./vite");
-    await setupVite(httpServer, app);
-  }
+      res.status(status).json({ message });
+      throw err;
+    });
 
-  return app;
+    if (process.env.NODE_ENV === "production") {
+      serveStatic(app);
+    } else {
+      const { setupVite } = await import("./vite");
+      await setupVite(httpServer, app);
+    }
+
+    isSetup = true;
+    return app;
+  })();
+
+  return setupPromise;
 }
 
 // Only start the server if this file is the main module
