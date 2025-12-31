@@ -41,7 +41,7 @@ export function CountdownTimer({ onComplete, targetDate }: CountdownProps) {
   }, [targetDate, onComplete]);
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-8 md:gap-12 w-full max-w-4xl mx-auto px-4">
+    <div className="grid grid-cols-4 gap-2 sm:gap-4 md:gap-8 w-full max-w-5xl mx-auto px-2 sm:px-4">
       <TimeUnit value={timeLeft.days} label="Days" />
       <TimeUnit value={timeLeft.hours} label="Hours" />
       <TimeUnit value={timeLeft.minutes} label="Minutes" />
@@ -55,28 +55,28 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
   const formattedValue = value < 10 ? `0${value}` : value;
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative glass-card rounded-2xl p-4 sm:p-6 md:p-8 min-w-[100px] sm:min-w-[140px] md:min-w-[180px] text-center border-t border-primary/20 shadow-[0_0_30px_-5px_rgba(234,179,8,0.15)]">
+    <div className="flex flex-col items-center min-w-0">
+      <div className="relative glass-card rounded-xl sm:rounded-2xl p-2 sm:p-4 md:p-8 w-full text-center border-t border-primary/20 shadow-[0_0_30px_-5px_rgba(234,179,8,0.15)] aspect-square flex items-center justify-center overflow-hidden">
         <AnimatePresence mode="popLayout">
           <motion.span
             key={formattedValue}
-            initial={{ y: 20, opacity: 0 }}
+            initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
+            exit={{ y: -10, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="block text-4xl sm:text-6xl md:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-primary to-primary/60 font-mono tracking-tighter"
+            className="block text-2xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-primary to-primary/60 font-mono tracking-tighter"
           >
             {formattedValue}
           </motion.span>
         </AnimatePresence>
         
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/50 rounded-tl-lg m-2" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/50 rounded-tr-lg m-2" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/50 rounded-bl-lg m-2" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/50 rounded-br-lg m-2" />
+        {/* Decorative elements - hidden on small screens to save space */}
+        <div className="absolute top-0 left-0 w-1 sm:w-2 h-1 sm:h-2 border-t border-l border-primary/30 rounded-tl-sm m-1 sm:m-2" />
+        <div className="absolute top-0 right-0 w-1 sm:w-2 h-1 sm:h-2 border-t border-r border-primary/30 rounded-tr-sm m-1 sm:m-2" />
+        <div className="absolute bottom-0 left-0 w-1 sm:w-2 h-1 sm:h-2 border-b border-l border-primary/30 rounded-bl-sm m-1 sm:m-2" />
+        <div className="absolute bottom-0 right-0 w-1 sm:w-2 h-1 sm:h-2 border-b border-r border-primary/30 rounded-br-sm m-1 sm:m-2" />
       </div>
-      <span className="mt-4 text-sm sm:text-base md:text-lg font-medium text-muted-foreground uppercase tracking-[0.2em]">
+      <span className="mt-2 sm:mt-4 text-[10px] sm:text-sm md:text-base font-medium text-muted-foreground uppercase tracking-widest truncate w-full text-center">
         {label}
       </span>
     </div>
