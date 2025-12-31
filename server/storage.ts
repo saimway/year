@@ -1,37 +1,47 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { messages, type Message, type InsertMessage } from "@shared/schema";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getMessages(): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private messages: Message[];
+  private currentId: number;
 
   constructor() {
-    this.users = new Map();
+    this.messages = [];
+    this.currentId = 1;
+    this.seed();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  private seed() {
+    const defaultMessages = [
+      "This will be your best year yet!",
+      "New beginnings await you.",
+      "Dream big and make it happen.",
+      "Wishing you success and happiness.",
+      "Your journey to greatness starts now.",
+      "Believe in yourself this year.",
+      "Make every second count!",
+      "Cheers to new adventures!",
+      "Embrace the fresh start.",
+      "You are capable of amazing things."
+    ];
+    
+    defaultMessages.forEach(content => {
+      this.messages.push({ id: this.currentId++, content });
+    });
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getMessages(): Promise<Message[]> {
+    return this.messages;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const message: Message = { ...insertMessage, id: this.currentId++ };
+    this.messages.push(message);
+    return message;
   }
 }
 
