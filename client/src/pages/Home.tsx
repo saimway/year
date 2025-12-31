@@ -20,6 +20,33 @@ export default function Home() {
     return now.getFullYear() + 1;
   });
 
+  useEffect(() => {
+    const checkCelebrationWindow = () => {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      
+      // Target 12:00:00 AM of the upcoming year
+      const target = new Date(currentYear + 1, 0, 1, 0, 0, 0);
+      const diffSeconds = (now.getTime() - target.getTime()) / 1000;
+
+      // If we are within the first 5 minutes of the new year (0 to 300 seconds after target)
+      if (diffSeconds >= 0 && diffSeconds <= 5 * 60) {
+        setCelebrationYear(currentYear + 1);
+        setIsCelebrationMode(true);
+      }
+      
+      // Also check if we just passed a year and are in the first 5 mins of Jan 1st CURRENT year
+      const currentJan1 = new Date(currentYear, 0, 1, 0, 0, 0);
+      const currentDiffSeconds = (now.getTime() - currentJan1.getTime()) / 1000;
+      if (currentDiffSeconds >= 0 && currentDiffSeconds <= 5 * 60) {
+        setCelebrationYear(currentYear);
+        setIsCelebrationMode(true);
+      }
+    };
+
+    checkCelebrationWindow();
+  }, []);
+
   // Logic to handle 5-minute celebration timer
   useEffect(() => {
     if (isCelebrationMode) {
@@ -40,26 +67,8 @@ export default function Home() {
     setIsCelebrationMode(true);
   };
 
-  const triggerTestCelebration = () => {
-    const now = new Date();
-    setCelebrationYear(now.getFullYear() + 1);
-    setIsCelebrationMode(true);
-  };
-
   return (
     <div className="min-h-screen w-full bg-background relative overflow-hidden flex flex-col items-center justify-center p-4">
-      
-      {/* Test Button */}
-      <div className="fixed bottom-8 right-8 z-[100]">
-        <button
-          onClick={triggerTestCelebration}
-          data-testid="button-test-animation"
-          className="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/50 px-4 py-2 rounded-lg backdrop-blur-md transition-all active:scale-95 text-xs font-mono uppercase tracking-widest flex items-center gap-2"
-        >
-          <Sparkles className="w-3 h-3" />
-          Test Animation
-        </button>
-      </div>
       
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -126,18 +135,6 @@ export default function Home() {
           transition={{ delay: 0.4 }}
           className="text-center space-y-6"
         >
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground/60">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              Local Timezone Synced
-            </div>
-            <span className="hidden sm:inline">•</span>
-            <div className="flex items-center gap-2">
-               <Music className="w-4 h-4" />
-               Audio Responsive
-            </div>
-          </div>
-          
           <p className="text-xs text-muted-foreground/40 font-mono">
              DESIGNED FOR THE NEW ERA
           </p>
