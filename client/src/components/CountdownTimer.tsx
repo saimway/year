@@ -18,7 +18,8 @@ export function CountdownTimer({ onComplete, targetDate }: CountdownProps) {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
-      const diffInSeconds = differenceInSeconds(targetDate, now);
+      // differenceInSeconds works with Date objects, which are inherently UTC but initialized with local time here
+      const diffInSeconds = Math.floor((targetDate.getTime() - now.getTime()) / 1000);
 
       if (diffInSeconds <= 0) {
         onComplete();

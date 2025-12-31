@@ -8,14 +8,17 @@ import { motion } from "framer-motion";
 export default function Home() {
   const [targetDate, setTargetDate] = useState<Date>(() => {
     const now = new Date();
-    const nextYear = startOfYear(addYears(now, 1));
-    // If it's already Jan 1st 00:00:00, ensure we target next year
-    // But for testing/logic, strictly next Jan 1
-    return nextYear;
+    // Use local timezone by default with Date constructor
+    const currentYear = now.getFullYear();
+    const nextYearDate = new Date(currentYear + 1, 0, 1, 0, 0, 0);
+    return nextYearDate;
   });
 
   const [isCelebrationMode, setIsCelebrationMode] = useState(false);
-  const [celebrationYear, setCelebrationYear] = useState<number>(() => getYear(new Date()) + 1);
+  const [celebrationYear, setCelebrationYear] = useState<number>(() => {
+    const now = new Date();
+    return now.getFullYear() + 1;
+  });
 
   // Logic to handle 5-minute celebration timer
   useEffect(() => {
@@ -23,20 +26,23 @@ export default function Home() {
       // After 5 minutes, reset to countdown for the NEXT year
       const timer = setTimeout(() => {
         setIsCelebrationMode(false);
-        setTargetDate((prev) => addYears(prev, 1)); // Prepare for year after next
+        const nextTarget = new Date(targetDate);
+        nextTarget.setFullYear(nextTarget.getFullYear() + 1);
+        setTargetDate(nextTarget);
       }, 5 * 60 * 1000); // 5 minutes
 
       return () => clearTimeout(timer);
     }
-  }, [isCelebrationMode]);
+  }, [isCelebrationMode, targetDate]);
 
   const handleCountdownComplete = () => {
-    setCelebrationYear(getYear(targetDate));
+    setCelebrationYear(targetDate.getFullYear());
     setIsCelebrationMode(true);
   };
 
   const triggerTestCelebration = () => {
-    setCelebrationYear(2025); // Use a fixed year or next year for test
+    const now = new Date();
+    setCelebrationYear(now.getFullYear() + 1);
     setIsCelebrationMode(true);
   };
 
