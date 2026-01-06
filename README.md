@@ -1,12 +1,8 @@
-# replit.md
+# New Year Countdown Application
 
 ## Overview
 
 This is a New Year countdown web application that displays an animated countdown timer to midnight and triggers a celebration with fireworks and motivational messages when the new year arrives. The app features an elegant gold and dark theme with smooth animations, confetti effects, and a 5-minute celebration mode before resetting for the next year.
-
-## User Preferences
-
-Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
@@ -50,23 +46,39 @@ The `messages` table stores motivational text displayed during celebrations. The
 - `shared/schema.ts` - Drizzle table definitions and Zod validation schemas
 - `shared/routes.ts` - Type-safe API route definitions with Zod response schemas
 
-## External Dependencies
+## Deployment on Vercel
 
-### Database
-- **PostgreSQL**: Configured via `DATABASE_URL` environment variable
-- **Drizzle ORM**: Schema management and migrations (`drizzle-kit push` for schema sync)
-- **Migrations**: Output to `./migrations` directory
+1. **Prerequisites**: Ensure you have the [Vercel CLI](https://vercel.com/docs/cli) installed or use the Vercel dashboard.
 
-### Frontend Libraries
-- **Radix UI**: Headless component primitives (dialogs, menus, tooltips, etc.)
-- **Lucide React**: Icon library
-- **Google Fonts**: Cinzel, Inter, Playfair Display, DM Sans, Geist Mono, Fira Code
+2. **Configuration**: The project is configured for Vercel deployment. Ensure your `vercel.json` (if present) or Vercel project settings point to the correct output directory (`dist/public` for frontend). Since this project uses a custom Express server, you might need to adapt it for Serverless Functions or deploy the frontend separately if the backend logic is minimal or can be refactored.
 
-### Development Tools
-- **Vite**: Development server with HMR
-- **Replit Plugins**: Runtime error overlay, cartographer, dev banner (development only)
+   *Note: If you are deploying as a full-stack application on Vercel, typically you would use Next.js or adapt the Express server to Vercel Serverless Functions. As this project is structured with a custom Express server, deploying to Vercel might require configuring a `vercel.json` to handle the server-side code or deploying the frontend as a static site and the backend elsewhere (like Render, Railway, or Heroku).*
 
-### Build Configuration
-- Frontend builds to `dist/public`
-- Server bundles to `dist/index.cjs` with specific dependencies bundled (see `script/build.ts` allowlist)
-- TypeScript configured with bundler module resolution and path aliases
+   *For a static frontend deployment on Vercel:*
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist/public`
+   - **Install Command**: `npm install`
+
+3. **Environment Variables**: Set any necessary environment variables in the Vercel dashboard.
+
+## Local Development
+
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+
+2.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
+
+3.  **Build for Production**:
+    ```bash
+    npm run build
+    ```
+
+4.  **Start Production Server**:
+    ```bash
+    npm start
+    ```

@@ -3,10 +3,24 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
-  if (!fs.existsSync(distPath)) {
+  // Try multiple paths to find dist/public
+  const possiblePaths = [
+    path.resolve(__dirname, "public"), // Standard build structure (dist/public sibling to dist/index.cjs)
+    path.resolve(process.cwd(), "dist", "public"), // Vercel / Standard Monorepo structure
+    path.resolve(process.cwd(), "public"), // Fallback
+  ];
+
+  let distPath = "";
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      distPath = p;
+      break;
+    }
+  }
+
+  if (!distPath) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find the build directory. Checked: ${possiblePaths.join(", ")}`,
     );
   }
 
